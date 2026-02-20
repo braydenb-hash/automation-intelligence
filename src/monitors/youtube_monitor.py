@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from typing import List, Optional, Dict
 
 from ..utils.config import load_sources, get_youtube_channels, get_filter_keywords, DATA_DIR
-from ..utils.file_manager import load_processed_content, save_processed_content
+from ..utils.database import get_processed_video_ids, add_processed_video_id, set_last_scan_time
 from ..utils.logger import setup_logger
 
 logger = setup_logger("youtube_monitor")
@@ -133,8 +133,7 @@ def check_for_new_videos(days_back=7, max_per_channel=3):
     # type: (int, int) -> List[VideoInfo]
     channels = get_youtube_channels()
     keywords = get_filter_keywords()
-    processed = load_processed_content()
-    processed_ids = set(processed.get("processed_video_ids", []))
+    processed_ids = get_processed_video_ids()
     cutoff = datetime.utcnow() - timedelta(days=days_back)
 
     new_videos = []
@@ -182,13 +181,11 @@ def check_for_new_videos(days_back=7, max_per_channel=3):
             )
 
             new_videos.append(video)
+            add_processed_video_id(vid_id)
             processed_ids.add(vid_id)
             count += 1
 
-    # Update processed content
-    processed["processed_video_ids"] = list(processed_ids)
-    processed["last_check"] = datetime.utcnow().isoformat()
-    save_processed_content(processed)
+    set_last_scan_time(datetime.utcnow().isoformat())
 
     relevant_count = sum(1 for v in new_videos if v.is_relevant)
     logger.info(

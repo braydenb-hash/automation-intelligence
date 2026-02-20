@@ -4,7 +4,8 @@ from pathlib import Path
 from typing import List, Dict, Any
 
 from ..utils.config import CURRICULUM_DIR, WORKFLOWS_DIR
-from ..utils.file_manager import load_workflow_library, write_markdown
+from ..utils.database import get_all_workflows
+from ..utils.file_manager import write_markdown
 from ..utils.logger import setup_logger
 
 logger = setup_logger("curriculum_builder")
@@ -127,7 +128,7 @@ def build_learning_paths(workflows):
 
 def rebuild_curriculum():
     # type: () -> None
-    workflows = load_workflow_library()
+    workflows = get_all_workflows()
     logger.info("Building curriculum from %d workflows", len(workflows))
 
     index_content = build_index(workflows)

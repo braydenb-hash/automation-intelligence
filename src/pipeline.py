@@ -6,10 +6,8 @@ from .monitors.youtube_monitor import check_for_new_videos, VideoInfo
 from .processors.workflow_analyzer import analyze_transcript, build_workflow
 from .generators.workflow_doc_generator import generate_workflow_doc
 from .generators.curriculum_builder import rebuild_curriculum
-from .utils.file_manager import (
-    load_workflow_library, save_workflow_library,
-    append_discovery, today_str
-)
+from .utils.database import insert_workflow
+from .utils.file_manager import append_discovery, today_str
 from .utils.logger import setup_logger
 
 logger = setup_logger("pipeline")
@@ -46,7 +44,6 @@ def run_daily_scan(days_back=7, max_per_channel=3):
     # Step 2: Analyze
     logger.info("Step 2: Analyzing transcripts...")
     workflows_generated = []
-    library = load_workflow_library()
 
     for video in relevant_videos:
         if not video.transcript:
@@ -79,7 +76,7 @@ def run_daily_scan(days_back=7, max_per_channel=3):
         wf_dict = wf.to_dict()
         wf_dict["doc_path"] = str(doc_path)
         wf_dict["processed_at"] = datetime.utcnow().isoformat()
-        library.append(wf_dict)
+        insert_workflow(wf_dict)
         workflows_generated.append(wf_dict)
 
         # Log discovery
@@ -101,9 +98,6 @@ def run_daily_scan(days_back=7, max_per_channel=3):
             doc_path,
         )
         append_discovery(today_str(), discovery_entry)
-
-    # Save updated library
-    save_workflow_library(library)
 
     # Step 4: Rebuild curriculum
     logger.info("Step 4: Rebuilding curriculum...")

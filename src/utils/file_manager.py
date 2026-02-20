@@ -24,16 +24,19 @@ def save_json(filepath, data):
     logger.debug("Saved %s", filepath)
 
 
+# DEPRECATED: Use database.get_processed_video_ids() / get_last_scan_time() instead
 def load_processed_content():
     # type: () -> Dict[str, Any]
     return load_json(DATA_DIR / "processed_content.json")
 
 
+# DEPRECATED: Use database.add_processed_video_id() / set_last_scan_time() instead
 def save_processed_content(data):
     # type: (Dict[str, Any]) -> None
     save_json(DATA_DIR / "processed_content.json", data)
 
 
+# DEPRECATED: Use database.get_all_workflows() instead
 def load_workflow_library():
     # type: () -> List[Dict[str, Any]]
     data = load_json(DATA_DIR / "workflow_library.json")
@@ -42,6 +45,7 @@ def load_workflow_library():
     return data.get("workflows", [])
 
 
+# DEPRECATED: Use database.insert_workflow() instead
 def save_workflow_library(workflows):
     # type: (List[Dict[str, Any]]) -> None
     save_json(DATA_DIR / "workflow_library.json", {"workflows": workflows})

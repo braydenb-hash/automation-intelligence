@@ -64,6 +64,91 @@ def api_stats():
     })
 
 
+@app.route("/api/pulse")
+def api_pulse():
+    """The Pulse — curated high-value overview for the homepage."""
+    workflows = load_workflow_library()
+    processed = load_processed_content()
+
+    # Add slugs
+    for wf in workflows:
+        wf["slug"] = _slugify(wf.get("source_title", "untitled"))
+
+    # High-value workflows (score >= 8), sorted by score then recency
+    high_value = [w for w in workflows if w.get("value_score", 0) >= 8]
+    high_value.sort(key=lambda w: (-w.get("value_score", 0), w.get("published", "")), reverse=False)
+    high_value.sort(key=lambda w: -w.get("value_score", 0))
+
+    # Recent workflows (last 7 days)
+    from datetime import datetime, timedelta, timezone
+    cutoff = datetime.now(timezone.utc) - timedelta(days=7)
+    recent = []
+    for w in workflows:
+        try:
+            pub = datetime.fromisoformat(w.get("published", ""))
+            if pub.tzinfo is None:
+                pub = pub.replace(tzinfo=timezone.utc)
+            if pub >= cutoff:
+                recent.append(w)
+        except (ValueError, TypeError):
+            pass
+    recent.sort(key=lambda w: w.get("published", ""), reverse=True)
+
+    # Use-case breakdown with top workflow per category
+    use_case_map = defaultdict(list)
+    for w in workflows:
+        use_case_map[w.get("use_case", "general")].append(w)
+
+    use_case_summary = []
+    for uc, wfs in sorted(use_case_map.items()):
+        wfs_sorted = sorted(wfs, key=lambda w: -w.get("value_score", 0))
+        use_case_summary.append({
+            "use_case": uc,
+            "count": len(wfs),
+            "top_workflow": {
+                "slug": wfs_sorted[0].get("slug", ""),
+                "title": wfs_sorted[0].get("source_title", ""),
+                "value_score": wfs_sorted[0].get("value_score", 0),
+            } if wfs_sorted else None,
+        })
+
+    # All unique tools with counts
+    tool_counts = defaultdict(int)
+    for w in workflows:
+        for t in w.get("tools", []):
+            tool_counts[t] += 1
+    top_tools = sorted(tool_counts.items(), key=lambda x: -x[1])[:8]
+
+    return jsonify({
+        "total_workflows": len(workflows),
+        "high_value_count": len(high_value),
+        "high_value": [{
+            "slug": w["slug"],
+            "source_title": w.get("source_title", ""),
+            "channel_name": w.get("channel_name", ""),
+            "value_score": w.get("value_score", 0),
+            "skill_level": w.get("skill_level", ""),
+            "use_case": w.get("use_case", ""),
+            "overview": w.get("overview", ""),
+            "tools": w.get("tools", []),
+            "published": w.get("published", ""),
+            "workflow_steps": w.get("workflow_steps", []),
+        } for w in high_value[:6]],
+        "recent": [{
+            "slug": w["slug"],
+            "source_title": w.get("source_title", ""),
+            "channel_name": w.get("channel_name", ""),
+            "value_score": w.get("value_score", 0),
+            "skill_level": w.get("skill_level", ""),
+            "published": w.get("published", ""),
+        } for w in recent[:5]],
+        "use_cases": use_case_summary,
+        "top_tools": [{"name": t, "count": c} for t, c in top_tools],
+        "last_scan": processed.get("last_check"),
+        "videos_processed": len(processed.get("processed_video_ids", [])),
+    })
+
+
 @app.route("/api/workflows")
 def api_workflows():
     workflows = load_workflow_library()

@@ -212,6 +212,91 @@ select.filter-select { padding: 6px 12px; border-radius: 6px; border: 1px solid 
 .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .scan-status { font-size: 13px; color: var(--text2); margin-left: 12px; }
 
+/* ============================================
+   The Pulse (Homepage)
+   ============================================ */
+.pulse-hero { margin-bottom: 30px; }
+.pulse-hero h2 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+.pulse-hero p { font-size: 14px; color: var(--text2); }
+.pulse-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 30px; }
+.pulse-stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+.pulse-stat .val { font-size: 28px; font-weight: 700; }
+.pulse-stat .lbl { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+.pulse-section { margin-bottom: 32px; }
+.pulse-section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.pulse-section-header h3 { font-size: 16px; font-weight: 600; }
+.pulse-section-header a { font-size: 13px; color: var(--accent); text-decoration: none; cursor: pointer; }
+.pulse-section-header a:hover { text-decoration: underline; }
+.pulse-hv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+
+/* Use-case lanes */
+.uc-lanes { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.uc-lane { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; cursor: pointer; transition: all 0.15s; }
+.uc-lane:hover { border-color: var(--accent); transform: translateY(-1px); }
+.uc-lane-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; text-transform: capitalize; }
+.uc-lane-count { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+.uc-lane-top { font-size: 12px; color: var(--accent); }
+
+/* Tool chips */
+.pulse-tools { display: flex; gap: 8px; flex-wrap: wrap; }
+.pulse-tool-chip { display: flex; align-items: center; gap: 6px; padding: 6px 12px; background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; font-size: 12px; color: var(--text); cursor: pointer; transition: all 0.15s; }
+.pulse-tool-chip:hover { border-color: var(--accent); }
+.pulse-tool-chip .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.pulse-tool-chip .cnt { color: var(--text2); margin-left: 2px; }
+
+/* Recent activity list */
+.recent-list { display: flex; flex-direction: column; gap: 8px; }
+.recent-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; transition: all 0.15s; gap: 12px; }
+.recent-item:hover { border-color: var(--accent); }
+.recent-item-title { font-size: 13px; font-weight: 500; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent-item-meta { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+/* "New" badge */
+.badge.new { background: rgba(74,222,128,0.2); color: var(--green); font-size: 10px; padding: 1px 6px; animation: pulse-glow 2s ease-in-out infinite; }
+@keyframes pulse-glow { 0%,100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+/* ============================================
+   Node Drill-Down Side Panel
+   ============================================ */
+.node-panel-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; }
+.node-panel-overlay.active { display: block; }
+.node-panel { position: fixed; top: 0; right: -420px; width: 400px; height: 100vh; background: var(--bg2); border-left: 1px solid var(--border); padding: 24px; overflow-y: auto; z-index: 101; transition: right 0.25s ease; box-shadow: -8px 0 32px rgba(0,0,0,0.3); }
+.node-panel.active { right: 0; }
+.node-panel-close { position: absolute; top: 16px; right: 16px; width: 28px; height: 28px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text2); cursor: pointer; font-size: 14px; display: flex; align-items: center; justify-content: center; }
+.node-panel-close:hover { border-color: var(--accent); color: var(--text); }
+.node-panel-tool { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 12px; }
+.node-panel h3 { font-size: 16px; font-weight: 600; margin-bottom: 12px; line-height: 1.4; }
+.node-panel-details { font-size: 13px; color: var(--text2); line-height: 1.6; margin-bottom: 16px; }
+.node-panel-related { margin-top: 16px; }
+.node-panel-related h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); margin-bottom: 8px; }
+.node-panel-related a { display: block; font-size: 13px; color: var(--accent); text-decoration: none; padding: 4px 0; }
+.node-panel-related a:hover { text-decoration: underline; }
+
+/* ============================================
+   Accordion (Progressive Disclosure)
+   ============================================ */
+.accordion { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+.accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg2); cursor: pointer; font-size: 14px; font-weight: 500; transition: background 0.15s; }
+.accordion-header:hover { background: var(--bg3); }
+.accordion-chevron { transition: transform 0.2s; font-size: 12px; color: var(--text2); }
+.accordion.open .accordion-chevron { transform: rotate(180deg); }
+.accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.accordion.open .accordion-body { max-height: 800px; }
+.accordion-inner { padding: 12px 16px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+/* Sticky TOC for detail pages */
+.detail-toc { position: sticky; top: 20px; }
+.detail-toc h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); margin-bottom: 8px; }
+.detail-toc a { display: block; font-size: 12px; color: var(--text2); text-decoration: none; padding: 4px 0 4px 12px; border-left: 2px solid var(--border); transition: all 0.15s; }
+.detail-toc a:hover { color: var(--accent); border-left-color: var(--accent); }
+
+/* Copy-to-clipboard button */
+.copy-btn { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text2); font-size: 11px; cursor: pointer; transition: all 0.15s; }
+.copy-btn:hover { border-color: var(--accent); color: var(--text); }
+.copy-btn.copied { border-color: var(--green); color: var(--green); }
+.copyable-block { position: relative; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin: 8px 0; font-family: 'SF Mono','Fira Code',monospace; font-size: 13px; line-height: 1.5; }
+.copyable-block .copy-btn { position: absolute; top: 8px; right: 8px; }
+
 /* Curriculum */
 .curriculum-section { margin-bottom: 30px; }
 .curriculum-section h3 { font-size: 16px; margin-bottom: 12px; }
@@ -262,18 +347,33 @@ select.filter-select { padding: 6px 12px; border-radius: 6px; border: 1px solid 
 
 <nav class="sidebar">
   <h1>AutoIntel <span>Automation Intelligence</span></h1>
-  <div class="nav-item active" data-view="patterns"><span class="nav-icon">#</span> Patterns</div>
+  <div class="nav-item active" data-view="pulse"><span class="nav-icon">~</span> The Pulse</div>
+  <div class="nav-item" data-view="patterns"><span class="nav-icon">#</span> Patterns</div>
   <div class="nav-item" data-view="workflows"><span class="nav-icon">=</span> Workflows</div>
   <div class="nav-item" data-view="tools"><span class="nav-icon">*</span> Tools</div>
   <div class="nav-item" data-view="curriculum"><span class="nav-icon">@</span> Curriculum</div>
   <div class="nav-item" data-view="sources"><span class="nav-icon">></span> Sources</div>
-  <div class="nav-item" data-view="dashboard"><span class="nav-icon">~</span> Dashboard</div>
+  <div class="nav-item" data-view="dashboard"><span class="nav-icon">+</span> Dashboard</div>
 </nav>
+
+<!-- Node Drill-Down Panel -->
+<div id="node-panel-overlay" class="node-panel-overlay" onclick="closeNodePanel()"></div>
+<div id="node-panel" class="node-panel">
+  <button class="node-panel-close" onclick="closeNodePanel()">&times;</button>
+  <div id="node-panel-content"></div>
+</div>
 
 <div class="main">
 
-  <!-- Patterns View (now primary/default) -->
-  <div id="view-patterns" class="view active">
+  <!-- The Pulse (Homepage) -->
+  <div id="view-pulse" class="view active">
+    <div id="pulse-content">
+      <div class="loading-grid"><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div></div>
+    </div>
+  </div>
+
+  <!-- Patterns View -->
+  <div id="view-patterns" class="view">
     <div class="page-header">
       <h2 class="section-title">Workflow Patterns</h2>
     </div>
@@ -524,6 +624,14 @@ function renderNodeDiagram(container, steps, options) {
       (step.details ? '<div class="wf-node-details">' + esc(step.details) + '</div>' : '') +
       (step.sources && step.sources.length > 1 ? '<div class="wf-node-sources">' + step.sources.length + ' sources</div>' : '');
 
+    // Click to drill-down
+    node.style.cursor = 'pointer';
+    (function(s, allS) {
+      node.addEventListener('click', function() {
+        openNodePanel(s, allS, allToolsData);
+      });
+    })(step, steps);
+
     inner.appendChild(node);
     nodeEls.push(node);
   });
@@ -673,6 +781,7 @@ function showView(view) {
     location.hash = view;
   }
 
+  if (view === 'pulse') loadPulse();
   if (view === 'patterns') loadPatterns();
   if (view === 'dashboard') loadDashboard();
   if (view === 'sources') loadSources();
@@ -693,7 +802,7 @@ function navigateBack() {
 }
 
 function routeFromHash() {
-  var hash = location.hash.slice(1) || 'patterns';
+  var hash = location.hash.slice(1) || 'pulse';
   if (hash.startsWith('detail/')) {
     openDetail(hash.slice(7));
     return;
@@ -712,6 +821,229 @@ window.addEventListener('hashchange', routeFromHash);
 async function api(path) {
   var resp = await fetch(path);
   return resp.json();
+}
+
+// ============================================
+// "New" Badge Helper (within last 3 days)
+// ============================================
+function isNew(publishedStr) {
+  if (!publishedStr) return false;
+  try {
+    var pub = parseDate(publishedStr);
+    if (isNaN(pub.getTime())) return false;
+    var now = new Date();
+    var diff = now - pub;
+    return diff >= 0 && diff < 3 * 24 * 60 * 60 * 1000; // 3 days
+  } catch(e) { return false; }
+}
+
+function newBadge(publishedStr) {
+  return isNew(publishedStr) ? ' <span class="badge new">NEW</span>' : '';
+}
+
+function parseDate(dateStr) {
+  // Treat naive timestamps (no timezone) as UTC
+  if (dateStr && !dateStr.endsWith('Z') && !dateStr.match(/[+-]\d{2}:\d{2}$/)) {
+    dateStr = dateStr + 'Z';
+  }
+  return new Date(dateStr);
+}
+
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  try {
+    var d = parseDate(dateStr);
+    if (isNaN(d.getTime())) return '';
+    var now = new Date();
+    var diff = Math.floor((now - d) / 1000);
+    if (diff < 0) diff = 0;
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    if (diff < 604800) return Math.floor(diff/86400) + 'd ago';
+    return d.toLocaleDateString();
+  } catch(e) { return ''; }
+}
+
+// ============================================
+// Accordion Builder
+// ============================================
+function buildAccordion(title, contentHtml, startOpen) {
+  return '<div class="accordion' + (startOpen ? ' open' : '') + '">' +
+    '<div class="accordion-header" onclick="this.parentElement.classList.toggle(\'open\')">' +
+      '<span>' + esc(title) + '</span>' +
+      '<span class="accordion-chevron">&#9660;</span>' +
+    '</div>' +
+    '<div class="accordion-body"><div class="accordion-inner">' + contentHtml + '</div></div>' +
+  '</div>';
+}
+
+// ============================================
+// Copy-to-Clipboard
+// ============================================
+function copyToClipboard(text, btnEl) {
+  navigator.clipboard.writeText(text).then(function() {
+    btnEl.classList.add('copied');
+    btnEl.textContent = 'Copied!';
+    setTimeout(function() {
+      btnEl.classList.remove('copied');
+      btnEl.textContent = 'Copy';
+    }, 2000);
+  });
+}
+
+function buildCopyableBlock(text) {
+  var id = 'copy-' + Math.random().toString(36).slice(2, 8);
+  return '<div class="copyable-block" id="' + id + '">' +
+    '<button class="copy-btn" onclick="copyToClipboard(document.getElementById(\'' + id + '\').querySelector(\'.copy-text\').textContent, this)">Copy</button>' +
+    '<div class="copy-text">' + esc(text) + '</div>' +
+  '</div>';
+}
+
+// ============================================
+// Node Drill-Down Panel
+// ============================================
+function openNodePanel(step, allSteps, allTools) {
+  var panel = document.getElementById('node-panel');
+  var overlay = document.getElementById('node-panel-overlay');
+  var content = document.getElementById('node-panel-content');
+
+  var color = toolColor(step.tool || '');
+  var headerBg = hexToRgba(color, 0.15);
+
+  var html = '<div class="node-panel-tool" style="background:' + headerBg + ';color:' + color + '">Step ' + (step.step || '?') + ' &middot; ' + esc(normalizeTool(step.tool || 'Unknown')) + '</div>';
+  html += '<h3>' + esc(step.action || '') + '</h3>';
+
+  if (step.details) {
+    html += '<div class="node-panel-details">' + esc(step.details) + '</div>';
+  }
+
+  if (step.sources && step.sources.length > 0) {
+    html += '<div style="margin-bottom:16px">';
+    html += '<span style="font-size:11px;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px">Referenced in ' + step.sources.length + ' source' + (step.sources.length > 1 ? 's' : '') + ':</span>';
+    step.sources.forEach(function(src) {
+      html += '<div style="font-size:12px;color:var(--text);padding:2px 0">' + esc(src) + '</div>';
+    });
+    html += '</div>';
+  }
+
+  // Find other workflows using the same tool
+  if (allTools) {
+    var toolName = normalizeTool(step.tool || '');
+    var related = (allTools || []).filter(function(t) { return normalizeTool(t.name) === toolName; });
+    if (related.length > 0 && related[0].workflows) {
+      html += '<div class="node-panel-related"><h4>Other workflows using ' + esc(toolName) + '</h4>';
+      related[0].workflows.slice(0, 5).forEach(function(w) {
+        html += '<a href="#detail/' + w.slug + '" onclick="closeNodePanel();event.preventDefault();openDetail(\'' + w.slug + '\')">' + esc(w.title) + '</a>';
+      });
+      html += '</div>';
+    }
+  }
+
+  content.innerHTML = html;
+  panel.classList.add('active');
+  overlay.classList.add('active');
+}
+
+function closeNodePanel() {
+  document.getElementById('node-panel').classList.remove('active');
+  document.getElementById('node-panel-overlay').classList.remove('active');
+}
+
+// ============================================
+// The Pulse (Homepage)
+// ============================================
+var pulseData = null;
+async function loadPulse() {
+  if (!pulseData) {
+    document.getElementById('pulse-content').innerHTML = '<div class="loading-grid"><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div></div>';
+    pulseData = await api('/api/pulse');
+  }
+  renderPulse(pulseData);
+}
+
+function renderPulse(data) {
+  var html = '<div class="pulse-hero"><h2>The Pulse</h2><p>High-signal automation intelligence from across the ecosystem</p></div>';
+
+  // Stats row
+  html += '<div class="pulse-stats">';
+  html += '<div class="pulse-stat"><div class="val" style="color:var(--accent)">' + data.total_workflows + '</div><div class="lbl">Workflows</div></div>';
+  html += '<div class="pulse-stat"><div class="val" style="color:var(--green)">' + data.high_value_count + '</div><div class="lbl">High Value</div></div>';
+  html += '<div class="pulse-stat"><div class="val">' + data.videos_processed + '</div><div class="lbl">Videos Scanned</div></div>';
+  html += '<div class="pulse-stat"><div class="val" style="font-size:16px">' + (data.last_scan ? timeAgo(data.last_scan) : 'Never') + '</div><div class="lbl">Last Scan</div></div>';
+  html += '</div>';
+
+  // High-value discoveries
+  if (data.high_value && data.high_value.length > 0) {
+    html += '<div class="pulse-section">';
+    html += '<div class="pulse-section-header"><h3>High Value Discoveries</h3><a onclick="showView(\'workflows\')">View all &rarr;</a></div>';
+    html += '<div class="pulse-hv-grid">';
+    data.high_value.forEach(function(wf) {
+      html += renderCard(wf);
+    });
+    html += '</div></div>';
+  }
+
+  // Recent activity
+  if (data.recent && data.recent.length > 0) {
+    html += '<div class="pulse-section">';
+    html += '<div class="pulse-section-header"><h3>Latest Activity</h3></div>';
+    html += '<div class="recent-list">';
+    data.recent.forEach(function(w) {
+      var scoreClass = (w.value_score||0) >= 8 ? 'high' : (w.value_score||0) >= 5 ? 'medium' : 'low';
+      html += '<div class="recent-item" onclick="openDetail(\'' + w.slug + '\')">' +
+        '<span class="recent-item-title">' + esc(w.source_title) + newBadge(w.published) + '</span>' +
+        '<div class="recent-item-meta">' +
+          '<span class="badge level-' + (w.skill_level||'intermediate') + '">' + (w.skill_level||'').toUpperCase() + '</span>' +
+          '<span class="score-value ' + scoreClass + '" style="font-size:14px">' + (w.value_score||0) + '</span>' +
+          '<span style="font-size:11px;color:var(--text2)">' + timeAgo(w.published) + '</span>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Use-case lanes
+  if (data.use_cases && data.use_cases.length > 0) {
+    html += '<div class="pulse-section">';
+    html += '<div class="pulse-section-header"><h3>By Use Case</h3></div>';
+    html += '<div class="uc-lanes">';
+    data.use_cases.forEach(function(uc) {
+      var label = uc.use_case.replace(/-/g, ' ');
+      html += '<div class="uc-lane" onclick="document.getElementById(\'use-case-filter\').value=\'' + esc(uc.use_case) + '\';showView(\'workflows\');applyFilters()">' +
+        '<div class="uc-lane-name">' + esc(label) + '</div>' +
+        '<div class="uc-lane-count">' + uc.count + ' workflow' + (uc.count !== 1 ? 's' : '') + '</div>' +
+        (uc.top_workflow ? '<div class="uc-lane-top">Top: ' + esc(uc.top_workflow.title).slice(0, 50) + (uc.top_workflow.title.length > 50 ? '...' : '') + '</div>' : '') +
+      '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Top tools
+  if (data.top_tools && data.top_tools.length > 0) {
+    html += '<div class="pulse-section">';
+    html += '<div class="pulse-section-header"><h3>Most Used Tools</h3><a onclick="showView(\'tools\')">View all &rarr;</a></div>';
+    html += '<div class="pulse-tools">';
+    data.top_tools.forEach(function(t) {
+      var name = normalizeTool(t.name);
+      html += '<div class="pulse-tool-chip" onclick="document.getElementById(\'tools-search\').value=\'' + esc(name).replace(/'/g,"\\'") + '\';showView(\'tools\');filterTools()">' +
+        '<span class="dot" style="background:' + toolColor(name) + '"></span>' +
+        esc(name) + ' <span class="cnt">' + t.count + '</span>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  }
+
+  document.getElementById('pulse-content').innerHTML = html;
+
+  // Render mini-flows for high-value cards
+  requestAnimationFrame(function() {
+    document.querySelectorAll('#pulse-content .card-flow-preview').forEach(function(el) {
+      var slug = el.dataset.slug;
+      var wf = (data.high_value || []).find(function(w) { return w.slug === slug; });
+      if (wf && wf.workflow_steps) renderMiniFlow(el, wf.workflow_steps);
+    });
+  });
 }
 
 // ============================================
@@ -750,7 +1082,7 @@ function renderCard(wf) {
   return '<div class="workflow-card" onclick="openDetail(\'' + wf.slug + '\')">' +
     '<div class="card-flow-preview" data-slug="' + wf.slug + '"></div>' +
     '<div class="card-body">' +
-      '<div class="card-title">' + esc(wf.source_title) + '</div>' +
+      '<div class="card-title">' + esc(wf.source_title) + newBadge(wf.published) + '</div>' +
       '<div class="card-meta">' +
         '<span class="badge ' + levelClass + '">' + (wf.skill_level||'').toUpperCase() + '</span>' +
         '<span class="badge use-case">' + (wf.use_case||'general').replace(/-/g,' ') + '</span>' +
@@ -959,24 +1291,54 @@ async function openDetail(slug, skipHistory) {
   // Two-column layout for details
   html += '<div class="detail-grid"><div class="detail-main">';
 
-  // When to use
+  // When to use (always visible)
   if (wf.when_to_use && wf.when_to_use.length) {
-    html += '<div class="detail-section"><h3>When to Use</h3><ul class="detail-list">';
+    html += '<div class="detail-section" id="section-when-to-use"><h3>When to Use</h3><ul class="detail-list">';
     wf.when_to_use.forEach(function(item) { html += '<li>' + esc(item) + '</li>'; });
     html += '</ul></div>';
   }
+
+  // When NOT to use (accordion - collapsed by default)
   if (wf.when_not_to_use && wf.when_not_to_use.length) {
-    html += '<div class="detail-section"><h3>When NOT to Use</h3><ul class="detail-list red">';
-    wf.when_not_to_use.forEach(function(item) { html += '<li>' + esc(item) + '</li>'; });
-    html += '</ul></div>';
+    var notUseHtml = '<ul class="detail-list red" style="list-style:none;padding:0">';
+    wf.when_not_to_use.forEach(function(item) { notUseHtml += '<li>' + esc(item) + '</li>'; });
+    notUseHtml += '</ul>';
+    html += '<div id="section-when-not">' + buildAccordion('When NOT to Use', notUseHtml) + '</div>';
   }
+
+  // Alternatives (accordion - collapsed by default)
   if (wf.alternatives && wf.alternatives.length) {
-    html += '<div class="detail-section"><h3>Alternatives</h3><ul class="detail-list">';
-    wf.alternatives.forEach(function(item) { html += '<li>' + esc(item) + '</li>'; });
-    html += '</ul></div>';
+    var altHtml = '<ul class="detail-list" style="list-style:none;padding:0">';
+    wf.alternatives.forEach(function(item) { altHtml += '<li>' + esc(item) + '</li>'; });
+    altHtml += '</ul>';
+    html += '<div id="section-alternatives">' + buildAccordion('Alternatives', altHtml) + '</div>';
+  }
+
+  // Step-by-step (copyable details)
+  if (wf.workflow_steps && wf.workflow_steps.length) {
+    html += '<div class="detail-section" id="section-steps"><h3>Step-by-Step Details</h3>';
+    wf.workflow_steps.forEach(function(s) {
+      if (s.details) {
+        html += '<div style="margin-bottom:12px">';
+        html += '<div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px">Step ' + (s.step||'') + ': ' + esc(s.action || '') + '</div>';
+        html += buildCopyableBlock(s.details);
+        html += '</div>';
+      }
+    });
+    html += '</div>';
   }
 
   html += '</div><div class="detail-sidebar">';
+
+  // Sticky TOC
+  html += '<div class="detail-toc"><h4>On this page</h4>';
+  html += '<a href="#" onclick="event.preventDefault();document.querySelector(\'.detail-title\').scrollIntoView({behavior:\'smooth\'})">Overview</a>';
+  html += '<a href="#" onclick="event.preventDefault();document.getElementById(\'workflow-node-canvas\').scrollIntoView({behavior:\'smooth\'})">Workflow Diagram</a>';
+  if (wf.when_to_use && wf.when_to_use.length) html += '<a href="#" onclick="event.preventDefault();document.getElementById(\'section-when-to-use\').scrollIntoView({behavior:\'smooth\'})">When to Use</a>';
+  if (wf.when_not_to_use && wf.when_not_to_use.length) html += '<a href="#" onclick="event.preventDefault();document.getElementById(\'section-when-not\').scrollIntoView({behavior:\'smooth\'})">When NOT to Use</a>';
+  if (wf.alternatives && wf.alternatives.length) html += '<a href="#" onclick="event.preventDefault();document.getElementById(\'section-alternatives\').scrollIntoView({behavior:\'smooth\'})">Alternatives</a>';
+  if (wf.workflow_steps && wf.workflow_steps.length) html += '<a href="#" onclick="event.preventDefault();document.getElementById(\'section-steps\').scrollIntoView({behavior:\'smooth\'})">Step Details</a>';
+  html += '</div>';
 
   // Info card: Tech Stack
   var tools = (wf.tools || []).map(normalizeTool);
@@ -993,7 +1355,7 @@ async function openDetail(slug, skipHistory) {
   html += '<div><strong style="color:var(--text)">Cost:</strong> ' + esc(wf.cost_estimate || 'N/A') + '</div>';
   html += '<div><strong style="color:var(--text)">Complexity:</strong> ' + esc(wf.complexity || 'N/A') + '</div>';
   html += '<div><strong style="color:var(--text)">Channel:</strong> ' + esc(wf.channel_name || '') + '</div>';
-  html += '<div><strong style="color:var(--text)">Published:</strong> ' + (wf.published||'').slice(0,10) + '</div>';
+  html += '<div><strong style="color:var(--text)">Published:</strong> ' + (wf.published||'').slice(0,10) + newBadge(wf.published) + '</div>';
   html += '</div></div>';
 
   html += '</div></div>'; // close detail-grid
@@ -1301,6 +1663,9 @@ function hexToRgba(color, alpha) {
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
+    // Close node panel first if open
+    var panel = document.getElementById('node-panel');
+    if (panel.classList.contains('active')) { closeNodePanel(); return; }
     var page = document.getElementById('detail-page');
     if (page.classList.contains('active')) navigateBack();
   }

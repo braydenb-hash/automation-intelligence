@@ -102,6 +102,7 @@ def init_db():
     conn = get_connection()
     conn.executescript(SCHEMA_SQL)
     conn.close()
+    init_scan_history_table()
     logger.info("Database initialized at %s", DB_PATH)
 
 
@@ -605,5 +606,102 @@ def set_last_scan_time(iso_timestamp):
                 "INSERT OR REPLACE INTO scan_metadata(key, value) VALUES ('last_check', ?)",
                 (iso_timestamp,),
             )
+    finally:
+        conn.close()
+
+
+# ─── Channel Stats ────────────────────────────────────────────────
+
+def get_channel_stats():
+    # type: () -> List[Dict[str, Any]]
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT channel_name, COUNT(*) as total, "
+            "ROUND(AVG(value_score), 1) as avg_score, "
+            "MAX(value_score) as best_score "
+            "FROM workflows GROUP BY channel_name ORDER BY avg_score DESC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+
+def get_workflow_count_by_channel():
+    # type: () -> Dict[str, int]
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT channel_name, COUNT(*) as count FROM workflows GROUP BY channel_name"
+        ).fetchall()
+        return {r["channel_name"]: r["count"] for r in rows}
+    finally:
+        conn.close()
+
+
+# ─── Tool Ecosystem ────────────────────────────────────────────────
+
+def get_tool_pairs():
+    # type: () -> List[Dict[str, Any]]
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT t1.name as tool_a, t2.name as tool_b, COUNT(*) as pair_count "
+            "FROM workflow_tools wt1 "
+            "JOIN workflow_tools wt2 ON wt1.workflow_id = wt2.workflow_id AND wt1.tool_id < wt2.tool_id "
+            "JOIN tools t1 ON t1.id = wt1.tool_id "
+            "JOIN tools t2 ON t2.id = wt2.tool_id "
+            "GROUP BY t1.name, t2.name "
+            "HAVING COUNT(*) >= 2 "
+            "ORDER BY pair_count DESC"
+        ).fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        conn.close()
+
+
+# ─── Scan History ────────────────────────────────────────────────
+
+def init_scan_history_table():
+    # type: () -> None
+    conn = get_connection()
+    try:
+        with conn:
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS scan_history ("
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                "scan_date TEXT NOT NULL, "
+                "videos_checked INTEGER DEFAULT 0, "
+                "relevant_found INTEGER DEFAULT 0, "
+                "workflows_generated INTEGER DEFAULT 0, "
+                "completed_at TEXT DEFAULT (datetime('now')))"
+            )
+    finally:
+        conn.close()
+
+
+def record_scan_result(scan_date, videos_checked, relevant_found, workflows_generated):
+    # type: (str, int, int, int) -> None
+    conn = get_connection()
+    try:
+        with conn:
+            conn.execute(
+                "INSERT INTO scan_history (scan_date, videos_checked, relevant_found, workflows_generated) "
+                "VALUES (?, ?, ?, ?)",
+                (scan_date, videos_checked, relevant_found, workflows_generated),
+            )
+    finally:
+        conn.close()
+
+
+def get_scan_history(limit=10):
+    # type: (int) -> List[Dict[str, Any]]
+    conn = get_connection()
+    try:
+        rows = conn.execute(
+            "SELECT * FROM scan_history ORDER BY completed_at DESC LIMIT ?",
+            (limit,),
+        ).fetchall()
+        return [dict(r) for r in rows]
     finally:
         conn.close()

@@ -6,7 +6,7 @@ from .monitors.youtube_monitor import check_for_new_videos, VideoInfo
 from .processors.workflow_analyzer import analyze_transcript, build_workflow
 from .generators.workflow_doc_generator import generate_workflow_doc
 from .generators.curriculum_builder import rebuild_curriculum
-from .utils.database import insert_workflow
+from .utils.database import insert_workflow, record_scan_result
 from .utils.file_manager import append_discovery, today_str
 from .utils.logger import setup_logger
 
@@ -122,6 +122,14 @@ def run_daily_scan(days_back=7, max_per_channel=3):
             for w in high_value
         ],
     }
+
+    # Record scan history
+    record_scan_result(
+        scan_date=today_str(),
+        videos_checked=len(new_videos),
+        relevant_found=len(relevant_videos),
+        workflows_generated=len(workflows_generated),
+    )
 
     logger.info(
         "=== Scan complete: %d workflows generated, %d high-value ===",

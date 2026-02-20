@@ -166,7 +166,33 @@ select.filter-select { padding: 6px 12px; border-radius: 6px; border: 1px solid 
 .detail-info-card h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); margin-bottom: 10px; }
 @media (max-width: 900px) { .detail-grid { grid-template-columns: 1fr; } }
 
-/* Tools Index */
+/* Tools Index — List Layout */
+.tools-list { display: flex; flex-direction: column; gap: 2px; }
+.tool-row { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; transition: all 0.15s; overflow: hidden; }
+.tool-row:hover { border-color: var(--accent); }
+.tool-row-header { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; }
+.tool-row-color { width: 4px; height: 28px; border-radius: 2px; flex-shrink: 0; }
+.tool-row-name { font-size: 14px; font-weight: 600; min-width: 0; white-space: nowrap; }
+.tool-row-meta { font-size: 12px; color: var(--text2); margin-left: 4px; flex-shrink: 0; }
+.tool-row-spacer { flex: 1; }
+.tool-row-count { font-size: 12px; color: var(--text2); flex-shrink: 0; }
+.tool-row-count strong { color: var(--accent); font-size: 14px; font-weight: 700; }
+.tool-row.primary .tool-row-count strong { font-size: 16px; }
+.tool-row-chevron { font-size: 11px; color: var(--text2); transition: transform 0.2s; flex-shrink: 0; width: 16px; text-align: center; }
+.tool-row.open .tool-row-chevron { transform: rotate(180deg); }
+.tool-row-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.tool-row.open .tool-row-body { max-height: 600px; }
+.tool-row-inner { padding: 0 16px 12px; border-top: 1px solid var(--border); }
+.tool-row-workflow { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(42,45,62,0.5); font-size: 13px; }
+.tool-row-workflow:last-child { border-bottom: none; }
+.tool-row-workflow a { color: var(--accent); text-decoration: none; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tool-row-workflow a:hover { text-decoration: underline; }
+.tool-row-workflow .score-sm { font-size: 12px; color: var(--text2); flex-shrink: 0; }
+.tool-row-workflow .score-sm.high { color: var(--green); }
+.tool-row-url { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text2); text-decoration: none; margin-top: 8px; }
+.tool-row-url:hover { color: var(--accent); }
+
+/* Tools Index — Grid Layout (toggle) */
 .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
 .tool-index-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; transition: all 0.15s; }
 .tool-index-card:hover { border-color: var(--accent); }
@@ -177,6 +203,12 @@ select.filter-select { padding: 6px 12px; border-radius: 6px; border: 1px solid 
 .tool-index-workflows { font-size: 12px; color: var(--text2); }
 .tool-index-workflows a { color: var(--accent); text-decoration: none; }
 .tool-index-workflows a:hover { text-decoration: underline; }
+
+/* Tools view toggle */
+.view-toggle { display: flex; gap: 4px; }
+.view-toggle-btn { padding: 5px 10px; border-radius: 5px; border: 1px solid var(--border); background: var(--bg2); color: var(--text2); font-size: 12px; cursor: pointer; transition: all 0.15s; }
+.view-toggle-btn:hover { border-color: var(--accent); color: var(--text); }
+.view-toggle-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
 /* Sources */
 .source-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
@@ -341,6 +373,14 @@ select.filter-select { padding: 6px 12px; border-radius: 6px; border: 1px solid 
 .tool-index-card.primary .tool-index-name { color: var(--accent); }
 .tool-index-card .tool-workflow-count { font-size: 28px; font-weight: 700; color: var(--accent); margin-left: auto; flex-shrink: 0; }
 .tool-index-card.secondary .tool-workflow-count { font-size: 22px; color: var(--text2); }
+.tool-row.primary { border-color: rgba(124,110,246,0.3); }
+.tool-row.primary .tool-row-name { color: var(--accent); }
+
+/* Tab bar (reusable) */
+.tab-bar { display: flex; gap: 4px; margin-bottom: 16px; }
+.tab-btn { padding: 7px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); color: var(--text2); font-size: 13px; cursor: pointer; transition: all 0.15s; }
+.tab-btn:hover { border-color: var(--accent); color: var(--text); }
+.tab-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 </style>
 </head>
 <body>
@@ -378,6 +418,7 @@ select.filter-select { padding: 6px 12px; border-radius: 6px; border: 1px solid 
       <h2 class="section-title">Workflow Patterns</h2>
     </div>
     <div class="search-bar"><input type="text" id="patterns-search" placeholder="Search patterns and workflows..." oninput="filterPatterns()"></div>
+    <div class="filters" id="patterns-filters"></div>
     <div id="patterns-content"></div>
   </div>
 
@@ -406,15 +447,29 @@ select.filter-select { padding: 6px 12px; border-radius: 6px; border: 1px solid 
 
   <!-- Tools View -->
   <div id="view-tools" class="view">
-    <h2 class="section-title">Tool Index</h2>
-    <div class="search-bar"><input type="text" id="tools-search" placeholder="Search tools..." oninput="filterTools()"></div>
-    <div id="tools-grid" class="tools-grid"></div>
+    <div class="page-header">
+      <h2 class="section-title" style="margin-bottom:0">Tool Index</h2>
+      <div class="view-toggle">
+        <button class="view-toggle-btn active" data-tools-view="list" onclick="setToolsView('list')">List</button>
+        <button class="view-toggle-btn" data-tools-view="grid" onclick="setToolsView('grid')">Grid</button>
+      </div>
+    </div>
+    <div class="search-bar"><input type="text" id="tools-search" placeholder="Search tools by name or category..." oninput="filterTools()"></div>
+    <div class="filters" id="tools-filters"></div>
+    <div id="tools-list" class="tools-list"></div>
+    <div id="tools-grid" class="tools-grid" style="display:none"></div>
   </div>
 
   <!-- Curriculum View -->
   <div id="view-curriculum" class="view">
     <h2 class="section-title">Curriculum</h2>
-    <div id="curriculum-content"></div>
+    <div class="search-bar"><input type="text" id="curriculum-search" placeholder="Search workflows in curriculum..." oninput="filterCurriculum()"></div>
+    <div class="tab-bar" id="curriculum-tabs">
+      <button class="tab-btn active" onclick="switchCurriculumTab('levels', this)">By Skill Level</button>
+      <button class="tab-btn" onclick="switchCurriculumTab('paths', this)">Learning Paths</button>
+    </div>
+    <div id="curriculum-levels"></div>
+    <div id="curriculum-paths" style="display:none"></div>
   </div>
 
   <!-- Sources View -->
@@ -455,6 +510,7 @@ select.filter-select { padding: 6px 12px; border-radius: 6px; border: 1px solid 
       </div>
     </div>
     <div id="stats-grid" class="stats-grid"></div>
+    <div id="scan-history-section"></div>
     <h3 class="section-title" style="margin-top:20px">Recent Discoveries</h3>
     <div class="discovery-layout">
       <div id="discovery-dates" class="discovery-list"></div>
@@ -934,7 +990,7 @@ function openNodePanel(step, allSteps, allTools) {
     if (related.length > 0 && related[0].workflows) {
       html += '<div class="node-panel-related"><h4>Other workflows using ' + esc(toolName) + '</h4>';
       related[0].workflows.slice(0, 5).forEach(function(w) {
-        html += '<a href="#detail/' + w.slug + '" onclick="closeNodePanel();event.preventDefault();openDetail(\'' + w.slug + '\')">' + esc(w.title) + '</a>';
+        html += '<a href="#detail/' + w.slug + '" onclick="closeNodePanel();event.preventDefault();openDetail(\'' + w.slug + '\')">' + esc(w.source_title) + '</a>';
       });
       html += '</div>';
     }
@@ -1034,6 +1090,26 @@ function renderPulse(data) {
     html += '</div></div>';
   }
 
+  // Tool Ecosystem (common tool pairings)
+  if (data.tool_pairs && data.tool_pairs.length > 0) {
+    html += '<div class="pulse-section">';
+    html += '<div class="pulse-section-header"><h3>Tool Ecosystem</h3></div>';
+    html += '<div style="display:flex;flex-wrap:wrap;gap:10px">';
+    data.tool_pairs.forEach(function(pair) {
+      var colorA = toolColor(normalizeTool(pair.tool_a));
+      var colorB = toolColor(normalizeTool(pair.tool_b));
+      html += '<div style="display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg2);border:1px solid var(--border);border-radius:20px;font-size:12px;color:var(--text)">' +
+        '<span style="width:8px;height:8px;border-radius:50%;background:' + colorA + '"></span>' +
+        esc(normalizeTool(pair.tool_a)) +
+        '<span style="color:var(--text2);font-size:10px">&#8596;</span>' +
+        '<span style="width:8px;height:8px;border-radius:50%;background:' + colorB + '"></span>' +
+        esc(normalizeTool(pair.tool_b)) +
+        '<span style="color:var(--text2);font-size:11px;margin-left:4px">' + pair.pair_count + '</span>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  }
+
   document.getElementById('pulse-content').innerHTML = html;
 
   // Render mini-flows for high-value cards
@@ -1056,6 +1132,21 @@ async function loadDashboard() {
     '<div class="stat-card"><div class="label">High Value (8+)</div><div class="value green">' + stats.high_value_count + '</div></div>' +
     '<div class="stat-card"><div class="label">Videos Processed</div><div class="value">' + stats.videos_processed + '</div></div>' +
     '<div class="stat-card"><div class="label">Last Scan</div><div class="value" style="font-size:16px">' + (stats.last_scan ? new Date(stats.last_scan).toLocaleDateString() : 'Never') + '</div></div>';
+
+  // Scan history
+  var history = await api('/api/scan-history');
+  var histEl = document.getElementById('scan-history-section');
+  if (history.length > 0) {
+    var hHtml = '<h3 class="section-title" style="margin-top:20px">Scan History</h3>';
+    hHtml += '<table class="curriculum-table"><thead><tr><th>Date</th><th>Videos</th><th>Relevant</th><th>Workflows</th></tr></thead><tbody>';
+    history.forEach(function(h) {
+      hHtml += '<tr><td>' + (h.scan_date || '') + '</td><td>' + (h.videos_checked || 0) + '</td><td>' + (h.relevant_found || 0) + '</td><td>' + (h.workflows_generated || 0) + '</td></tr>';
+    });
+    hHtml += '</tbody></table>';
+    histEl.innerHTML = hHtml;
+  } else {
+    histEl.innerHTML = '';
+  }
 
   // Load discoveries inline
   var dates = await api('/api/discoveries');
@@ -1100,12 +1191,42 @@ function renderCard(wf) {
 // ============================================
 // Patterns View
 // ============================================
+var patternsUseCaseFilter = '';
+
 async function loadPatterns() {
   if (!allGroups) {
     document.getElementById('patterns-content').innerHTML = '<div class="loading-grid"><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div></div>';
     allGroups = await api('/api/workflow-groups');
+    buildPatternsFilters();
   }
   renderPatternsHTML(allGroups);
+}
+
+function buildPatternsFilters() {
+  var useCases = {};
+  (allGroups.groups || []).forEach(function(g) {
+    g.members.forEach(function(m) {
+      var uc = m.use_case || '';
+      if (uc) useCases[uc] = true;
+    });
+  });
+  (allGroups.ungrouped || []).forEach(function(wf) {
+    var uc = wf.use_case || '';
+    if (uc) useCases[uc] = true;
+  });
+  var html = '<button class="filter-btn active" onclick="setPatternsUseCase(this, \'\')">All</button>';
+  Object.keys(useCases).sort().forEach(function(uc) {
+    var label = uc.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    html += '<button class="filter-btn" onclick="setPatternsUseCase(this, \'' + uc + '\')">' + label + '</button>';
+  });
+  document.getElementById('patterns-filters').innerHTML = html;
+}
+
+function setPatternsUseCase(btn, uc) {
+  patternsUseCaseFilter = uc;
+  document.querySelectorAll('#patterns-filters .filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  if (allGroups) renderPatternsHTML(allGroups);
 }
 
 function renderPatternsHTML(data) {
@@ -1114,6 +1235,11 @@ function renderPatternsHTML(data) {
 
   // Render groups
   var groups = (data.groups || []).filter(function(g) {
+    // Use-case filter: check if any member matches
+    if (patternsUseCaseFilter) {
+      var hasUc = g.members.some(function(m) { return (m.use_case || '') === patternsUseCaseFilter; });
+      if (!hasUc) return false;
+    }
     if (!searchQuery) return true;
     if (g.name.toLowerCase().indexOf(searchQuery) >= 0) return true;
     if (g.description.toLowerCase().indexOf(searchQuery) >= 0) return true;
@@ -1154,6 +1280,7 @@ function renderPatternsHTML(data) {
 
   // Render ungrouped
   var ungrouped = (data.ungrouped || []).filter(function(wf) {
+    if (patternsUseCaseFilter && (wf.use_case || '') !== patternsUseCaseFilter) return false;
     if (!searchQuery) return true;
     if ((wf.source_title||'').toLowerCase().indexOf(searchQuery) >= 0) return true;
     if ((wf.overview||'').toLowerCase().indexOf(searchQuery) >= 0) return true;
@@ -1432,9 +1559,12 @@ document.querySelectorAll('#level-filters .filter-btn').forEach(function(btn) {
 // ============================================
 // Tools Index
 // ============================================
+var toolsViewMode = localStorage.getItem('toolsView') || 'list';
+var toolsCategoryFilter = '';
+
 async function loadToolsIndex() {
   if (!allToolsData) {
-    document.getElementById('tools-grid').innerHTML = '<div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div>';
+    document.getElementById('tools-list').innerHTML = '<div class="skeleton skeleton-card"></div><div class="skeleton skeleton-card"></div>';
     allToolsData = await api('/api/tools-index');
     // Merge duplicate tools from normalization
     var merged = {};
@@ -1443,7 +1573,6 @@ async function loadToolsIndex() {
       if (!merged[name]) {
         merged[name] = { name: name, category: tool.category, pricing: tool.pricing, url: tool.url, workflows: [], workflow_count: 0 };
       }
-      // Merge workflows, avoiding duplicates
       tool.workflows.forEach(function(wf) {
         if (!merged[name].workflows.some(function(w) { return w.slug === wf.slug; })) {
           merged[name].workflows.push(wf);
@@ -1455,19 +1584,118 @@ async function loadToolsIndex() {
       if (!merged[name].url && tool.url) merged[name].url = tool.url;
     });
     allToolsData = Object.values(merged).sort(function(a,b) { return b.workflow_count - a.workflow_count; });
+    buildToolCategoryFilters();
   }
+  // Restore view toggle state
+  document.querySelectorAll('.view-toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+  var activeToggle = document.querySelector('.view-toggle-btn[data-tools-view="' + toolsViewMode + '"]');
+  if (activeToggle) activeToggle.classList.add('active');
   renderToolsHTML();
+}
+
+function buildToolCategoryFilters() {
+  var cats = {};
+  (allToolsData || []).forEach(function(t) {
+    if (t.category) {
+      var label = t.category.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+      cats[t.category] = label;
+    }
+  });
+  var html = '<button class="filter-btn active" data-cat="" onclick="setToolCategory(this, \'\')">All</button>';
+  Object.keys(cats).sort().forEach(function(cat) {
+    html += '<button class="filter-btn" data-cat="' + cat + '" onclick="setToolCategory(this, \'' + cat + '\')">' + cats[cat] + '</button>';
+  });
+  document.getElementById('tools-filters').innerHTML = html;
+}
+
+function setToolCategory(btn, cat) {
+  toolsCategoryFilter = cat;
+  document.querySelectorAll('#tools-filters .filter-btn').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderToolsHTML();
+}
+
+function setToolsView(mode) {
+  toolsViewMode = mode;
+  localStorage.setItem('toolsView', mode);
+  document.querySelectorAll('.view-toggle-btn').forEach(function(b) { b.classList.remove('active'); });
+  var btn = document.querySelector('.view-toggle-btn[data-tools-view="' + mode + '"]');
+  if (btn) btn.classList.add('active');
+  renderToolsHTML();
+}
+
+function toggleToolExpand(id) {
+  var row = document.getElementById('tool-' + id);
+  if (row) row.classList.toggle('open');
 }
 
 function renderToolsHTML() {
   var searchQuery = (document.getElementById('tools-search').value || '').toLowerCase();
   var data = allToolsData || [];
   if (searchQuery) {
-    data = data.filter(function(t) { return t.name.toLowerCase().indexOf(searchQuery) >= 0 || (t.category||'').toLowerCase().indexOf(searchQuery) >= 0; });
+    data = data.filter(function(t) {
+      return t.name.toLowerCase().indexOf(searchQuery) >= 0 ||
+        (t.category || '').toLowerCase().indexOf(searchQuery) >= 0 ||
+        t.workflows.some(function(w) { return (w.source_title || '').toLowerCase().indexOf(searchQuery) >= 0; });
+    });
+  }
+  if (toolsCategoryFilter) {
+    data = data.filter(function(t) { return t.category === toolsCategoryFilter; });
   }
 
+  if (toolsViewMode === 'list') {
+    renderToolsList(data);
+    document.getElementById('tools-list').style.display = '';
+    document.getElementById('tools-grid').style.display = 'none';
+  } else {
+    renderToolsGrid(data);
+    document.getElementById('tools-list').style.display = 'none';
+    document.getElementById('tools-grid').style.display = '';
+  }
+}
+
+function renderToolsList(data) {
   var html = '';
-  var maxCount = data.length > 0 ? data[0].workflow_count : 1;
+  data.forEach(function(tool, idx) {
+    var tier = tool.workflow_count >= 3 ? 'primary' : '';
+    var color = toolColor(tool.name);
+    var catLabel = tool.category ? tool.category.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); }) : '';
+    var id = 'tool-' + idx;
+
+    html += '<div class="tool-row ' + tier + '" id="' + id + '">' +
+      '<div class="tool-row-header" onclick="toggleToolExpand(' + idx + ')">' +
+        '<div class="tool-row-color" style="background:' + color + '"></div>' +
+        '<span class="tool-row-name">' + esc(tool.name) + '</span>' +
+        (catLabel ? '<span class="tool-row-meta">' + esc(catLabel) + '</span>' : '') +
+        '<span class="tool-row-spacer"></span>' +
+        '<span class="tool-row-count"><strong>' + tool.workflow_count + '</strong> workflow' + (tool.workflow_count !== 1 ? 's' : '') + '</span>' +
+        '<span class="tool-row-chevron">&#9660;</span>' +
+      '</div>' +
+      '<div class="tool-row-body"><div class="tool-row-inner">';
+
+    tool.workflows.forEach(function(w) {
+      var scoreClass = (w.value_score || 0) >= 8 ? 'high' : '';
+      html += '<div class="tool-row-workflow">' +
+        '<span class="badge level-' + (w.skill_level || 'intermediate') + '">' + (w.skill_level || '').toUpperCase() + '</span>' +
+        '<a href="#detail/' + w.slug + '" onclick="event.preventDefault();openDetail(\'' + w.slug + '\')">' + esc(w.source_title) + '</a>' +
+        '<span class="score-sm ' + scoreClass + '">' + (w.value_score || 0) + '/10</span>' +
+      '</div>';
+    });
+
+    if (tool.url) {
+      html += '<a class="tool-row-url" href="' + esc(tool.url) + '" target="_blank" rel="noopener">' + esc(tool.url) + ' &#8599;</a>';
+    }
+    if (tool.pricing) {
+      html += '<div style="font-size:11px;color:var(--text2);margin-top:4px">' + esc(tool.pricing) + '</div>';
+    }
+
+    html += '</div></div></div>';
+  });
+  document.getElementById('tools-list').innerHTML = html || '<div class="empty-state">No tools match your filters.</div>';
+}
+
+function renderToolsGrid(data) {
+  var html = '';
   data.forEach(function(tool) {
     var tier = tool.workflow_count >= 3 ? 'primary' : tool.workflow_count >= 2 ? '' : 'secondary';
     html += '<div class="tool-index-card ' + tier + '">' +
@@ -1475,19 +1703,19 @@ function renderToolsHTML() {
         '<div class="tool-color-bar" style="background:' + toolColor(tool.name) + ';height:' + Math.max(20, tool.workflow_count * 12) + 'px"></div>' +
         '<div><div class="tool-index-name">' + esc(tool.name) + '</div>' +
         '<div class="tool-index-meta">' +
-          (tool.category ? esc(tool.category.replace(/-/g,' ')) : '') +
+          (tool.category ? esc(tool.category.replace(/-/g, ' ')) : '') +
           (tool.pricing ? ' &middot; ' + esc(tool.pricing) : '') +
         '</div></div>' +
         '<span class="tool-workflow-count">' + tool.workflow_count + '</span>' +
       '</div>' +
       '<div class="tool-index-workflows" style="margin-top:8px">' +
         tool.workflows.map(function(w) {
-          return '<a href="#detail/' + w.slug + '" onclick="event.preventDefault();openDetail(\'' + w.slug + '\')">' + esc(w.title) + '</a> <span class="badge level-' + (w.skill_level||'intermediate') + '">' + (w.skill_level||'').charAt(0).toUpperCase() + '</span>';
+          return '<a href="#detail/' + w.slug + '" onclick="event.preventDefault();openDetail(\'' + w.slug + '\')">' + esc(w.source_title) + '</a> <span class="badge level-' + (w.skill_level || 'intermediate') + '">' + (w.skill_level || '').charAt(0).toUpperCase() + '</span>';
         }).join('<br>') +
       '</div>' +
     '</div>';
   });
-  document.getElementById('tools-grid').innerHTML = html || '<div class="empty-state">No tools match your search.</div>';
+  document.getElementById('tools-grid').innerHTML = html || '<div class="empty-state">No tools match your filters.</div>';
 }
 
 function filterTools() {
@@ -1497,8 +1725,39 @@ function filterTools() {
 // ============================================
 // Curriculum
 // ============================================
+var curriculumData = null;
+var curriculumTab = 'levels';
+
 async function loadCurriculum() {
-  var workflows = await api('/api/workflows');
+  if (!curriculumData) {
+    curriculumData = await api('/api/workflows');
+  }
+  renderCurriculum();
+}
+
+function switchCurriculumTab(tab, btn) {
+  curriculumTab = tab;
+  document.querySelectorAll('#curriculum-tabs .tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  if (btn) btn.classList.add('active');
+  document.getElementById('curriculum-levels').style.display = tab === 'levels' ? '' : 'none';
+  document.getElementById('curriculum-paths').style.display = tab === 'paths' ? '' : 'none';
+}
+
+function filterCurriculum() {
+  renderCurriculum();
+}
+
+function renderCurriculum() {
+  var searchQuery = (document.getElementById('curriculum-search').value || '').toLowerCase();
+  var workflows = curriculumData || [];
+  if (searchQuery) {
+    workflows = workflows.filter(function(wf) {
+      return (wf.source_title || '').toLowerCase().indexOf(searchQuery) >= 0 ||
+        (wf.use_case || '').toLowerCase().indexOf(searchQuery) >= 0 ||
+        (wf.tools || []).some(function(t) { return t.toLowerCase().indexOf(searchQuery) >= 0; });
+    });
+  }
+
   var levels = { beginner: [], intermediate: [], advanced: [] };
   var paths = {};
   workflows.forEach(function(wf) {
@@ -1509,42 +1768,51 @@ async function loadCurriculum() {
     paths[uc].push(wf);
   });
 
-  var levelLabels = [['beginner','Fundamentals'], ['intermediate','Intermediate'], ['advanced','Advanced']];
-  var html = '';
+  // By Level
+  var levelLabels = [['beginner', 'Fundamentals'], ['intermediate', 'Intermediate'], ['advanced', 'Advanced']];
+  var levelsHtml = '';
   levelLabels.forEach(function(pair) {
     var level = pair[0], label = pair[1];
     var wfs = levels[level] || [];
-    wfs.sort(function(a,b) { return (b.value_score||0) - (a.value_score||0); });
-    html += '<div class="curriculum-section"><h3>' + label + ' (' + wfs.length + ')</h3>';
+    wfs.sort(function(a, b) { return (b.value_score || 0) - (a.value_score || 0); });
+    levelsHtml += '<div class="curriculum-section"><h3>' + label + ' (' + wfs.length + ')</h3>';
     if (wfs.length) {
-      html += '<table class="curriculum-table"><thead><tr><th>Workflow</th><th>Use Case</th><th>Tools</th><th>Value</th></tr></thead><tbody>';
+      levelsHtml += '<table class="curriculum-table"><thead><tr><th>Workflow</th><th>Use Case</th><th>Tools</th><th>Value</th></tr></thead><tbody>';
       wfs.forEach(function(wf) {
-        var tools = (wf.tools||[]).map(normalizeTool);
-        var unique = tools.filter(function(t,i) { return tools.indexOf(t) === i; });
-        html += '<tr onclick="openDetail(\'' + wf.slug + '\')"><td>' + esc(wf.source_title) + '</td>' +
-          '<td>' + (wf.use_case||'').replace(/-/g,' ') + '</td>' +
-          '<td>' + unique.slice(0,3).join(', ') + '</td>' +
-          '<td>' + (wf.value_score||0) + '/10</td></tr>';
+        var tools = (wf.tools || []).map(normalizeTool);
+        var unique = tools.filter(function(t, i) { return tools.indexOf(t) === i; });
+        levelsHtml += '<tr onclick="openDetail(\'' + wf.slug + '\')"><td>' + esc(wf.source_title) + '</td>' +
+          '<td>' + (wf.use_case || '').replace(/-/g, ' ') + '</td>' +
+          '<td>' + unique.slice(0, 3).join(', ') + '</td>' +
+          '<td>' + (wf.value_score || 0) + '/10</td></tr>';
       });
-      html += '</tbody></table>';
+      levelsHtml += '</tbody></table>';
     } else {
-      html += '<div class="empty-state">No workflows yet</div>';
+      levelsHtml += '<div class="empty-state">No workflows yet</div>';
     }
-    html += '</div>';
+    levelsHtml += '</div>';
   });
+  document.getElementById('curriculum-levels').innerHTML = levelsHtml;
 
-  html += '<h2 class="section-title" style="margin-top:30px">Learning Paths</h2>';
+  // Learning Paths
   var levelRank = { beginner: 0, intermediate: 1, advanced: 2 };
+  var pathsHtml = '';
   Object.keys(paths).sort().forEach(function(uc) {
     var wfs = paths[uc];
-    wfs.sort(function(a,b) { return (levelRank[a.skill_level]||1) - (levelRank[b.skill_level]||1); });
-    html += '<div class="curriculum-section"><h3>' + uc.replace(/-/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();}) + '</h3><ol>';
+    wfs.sort(function(a, b) { return (levelRank[a.skill_level] || 1) - (levelRank[b.skill_level] || 1); });
+    var ucTitle = uc.replace(/-/g, ' ').replace(/\b\w/g, function(c) { return c.toUpperCase(); });
+    pathsHtml += '<div class="curriculum-section"><h3>' + ucTitle + ' (' + wfs.length + ' workflows)</h3><ol>';
     wfs.forEach(function(wf) {
-      html += '<li><a href="#detail/' + wf.slug + '" onclick="event.preventDefault();openDetail(\'' + wf.slug + '\')">' + esc(wf.source_title) + '</a> (' + (wf.skill_level||'').charAt(0).toUpperCase() + (wf.skill_level||'').slice(1) + ')</li>';
+      var lvl = (wf.skill_level || '').charAt(0).toUpperCase() + (wf.skill_level || '').slice(1);
+      pathsHtml += '<li style="margin-bottom:6px"><a href="#detail/' + wf.slug + '" onclick="event.preventDefault();openDetail(\'' + wf.slug + '\')">' + esc(wf.source_title) + '</a> <span class="badge level-' + (wf.skill_level || 'intermediate') + '">' + lvl + '</span></li>';
     });
-    html += '</ol></div>';
+    pathsHtml += '</ol></div>';
   });
-  document.getElementById('curriculum-content').innerHTML = html;
+  document.getElementById('curriculum-paths').innerHTML = pathsHtml || '<div class="empty-state">No learning paths available.</div>';
+
+  // Maintain tab visibility
+  document.getElementById('curriculum-levels').style.display = curriculumTab === 'levels' ? '' : 'none';
+  document.getElementById('curriculum-paths').style.display = curriculumTab === 'paths' ? '' : 'none';
 }
 
 // ============================================
@@ -1562,10 +1830,28 @@ async function loadDiscoveryDate(date, el) {
 // ============================================
 async function loadSources() {
   var sources = await api('/api/sources');
-  document.getElementById('sources-list').innerHTML = sources.map(function(s) {
+  var channelStats = await api('/api/channel-stats');
+
+  // Channel leaderboard
+  var leaderHtml = '';
+  if (channelStats.length > 0) {
+    leaderHtml += '<div class="curriculum-section" style="margin-bottom:24px"><h3 style="margin-bottom:12px">Channel Insights</h3>';
+    leaderHtml += '<table class="curriculum-table"><thead><tr><th>Channel</th><th>Workflows</th><th>Avg Score</th><th>Best</th></tr></thead><tbody>';
+    channelStats.forEach(function(ch) {
+      leaderHtml += '<tr><td><strong>' + esc(ch.channel_name) + '</strong></td>' +
+        '<td>' + ch.total + '</td>' +
+        '<td><span style="color:' + (ch.avg_score >= 8 ? 'var(--green)' : ch.avg_score >= 5 ? 'var(--yellow)' : 'var(--text2)') + '">' + ch.avg_score + '</span></td>' +
+        '<td>' + ch.best_score + '/10</td></tr>';
+    });
+    leaderHtml += '</tbody></table></div>';
+  }
+
+  // Source list with counts
+  var listHtml = sources.map(function(s) {
+    var countBadge = s.workflow_count ? '<span class="badge use-case" style="margin-left:8px">' + s.workflow_count + ' workflow' + (s.workflow_count !== 1 ? 's' : '') + '</span>' : '';
     return '<div class="source-card">' +
       '<div class="source-info">' +
-        '<div class="source-name">' + esc(s.name) + ' <span class="priority-badge ' + s.priority + '">' + s.priority + '</span></div>' +
+        '<div class="source-name">' + esc(s.name) + ' <span class="priority-badge ' + s.priority + '">' + s.priority + '</span>' + countBadge + '</div>' +
         '<div class="source-focus">' + esc(s.focus || '') + '</div>' +
       '</div>' +
       '<div class="source-actions">' +
@@ -1574,6 +1860,8 @@ async function loadSources() {
       '</div>' +
     '</div>';
   }).join('');
+
+  document.getElementById('sources-list').innerHTML = leaderHtml + listHtml;
 }
 
 async function addSource() {

@@ -21,6 +21,8 @@ from ..utils.database import (
     get_stats, get_tools_index as db_get_tools_index,
     get_workflow_count, get_high_value_count,
     get_processed_video_count, get_last_scan_time,
+    get_channel_stats, get_workflow_count_by_channel,
+    get_tool_pairs, get_scan_history,
 )
 
 app = Flask(__name__, template_folder=str(PROJECT_ROOT / "src" / "dashboard" / "templates"))
@@ -86,6 +88,7 @@ def api_pulse():
         } for w in recent],
         "use_cases": use_cases,
         "top_tools": top_tools,
+        "tool_pairs": get_tool_pairs(),
         "last_scan": get_last_scan_time(),
         "videos_processed": get_processed_video_count(),
     })
@@ -156,7 +159,12 @@ def api_discovery_detail(date):
 @app.route("/api/sources")
 def api_sources():
     sources = load_sources()
-    return jsonify(sources.get("youtube_channels", []))
+    channels = sources.get("youtube_channels", [])
+    # Enrich with workflow counts
+    counts = get_workflow_count_by_channel()
+    for ch in channels:
+        ch["workflow_count"] = counts.get(ch.get("name", ""), 0)
+    return jsonify(channels)
 
 
 @app.route("/api/sources", methods=["POST"])
@@ -354,6 +362,7 @@ def api_workflow_groups():
                     "value_score": m.get("value_score", 0),
                     "slug": m.get("slug", ""),
                     "source_url": m.get("source_url", ""),
+                    "use_case": m.get("use_case", ""),
                 } for m in members],
                 "combined_tools": all_tools,
                 "combined_steps": combined_steps,
@@ -400,6 +409,18 @@ def api_tools_index():
         })
 
     return jsonify(result)
+
+
+@app.route("/api/channel-stats")
+def api_channel_stats():
+    stats = get_channel_stats()
+    return jsonify(stats)
+
+
+@app.route("/api/scan-history")
+def api_scan_history():
+    history = get_scan_history(limit=10)
+    return jsonify(history)
 
 
 @app.route("/api/scan", methods=["POST"])

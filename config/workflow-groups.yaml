@@ -1,0 +1,36 @@
+groups:
+  - id: claude-code-websites
+    name: "Building Websites with Claude Code"
+    description: "Using Claude Code with configuration files and design skills to generate professional websites without traditional coding"
+    matchers:
+      slug_list:
+        - "5-claude-code-hacks-to-build-beautiful-websites"
+        - "building-beautiful-websites-with-claude-code-is-too-easy"
+
+  - id: autonomous-code-agents
+    name: "Autonomous AI Code Generation"
+    description: "Multi-agent systems that autonomously plan, build, test, and deploy code using AI coding assistants"
+    matchers:
+      title_keywords:
+        - "agent team"
+        - "agency model"
+        - "agent memory"
+        - "safer"
+      required_tools: []
+      use_case: "development-ops"
+      slug_list:
+        - "3-years-into-the-ai-agency-model-where-its-all-going"
+        - "how-to-properly-use-claude-code-agent-teams-full-live-build"
+        - "i-built-a-safer-openclaw-alternative-using-claude-code"
+
+  - id: ai-research-automation
+    name: "AI Research Agent Automation"
+    description: "AI agents that autonomously research, gather, and synthesize information from the web on a schedule"
+    matchers:
+      title_keywords:
+        - "research"
+        - "trigger"
+      use_case: "research-analysis"
+      slug_list:
+        - "claude-code-triggerdev-im-never-building-agents-the-same-way"
+        - "you-need-to-hear-this-update"

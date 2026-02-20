@@ -1,0 +1,39 @@
+use_cases:
+  - id: content-pipeline
+    name: "Content Pipeline"
+    description: "Automated content creation, scheduling, and distribution"
+  - id: sales-automation
+    name: "Sales Automation"
+    description: "Lead gen, outreach, CRM automation"
+  - id: data-ops
+    name: "Data Operations"
+    description: "Data collection, transformation, and analysis pipelines"
+  - id: customer-support
+    name: "Customer Support"
+    description: "Chatbots, ticket routing, auto-response"
+  - id: development-ops
+    name: "Development Ops"
+    description: "Code generation, CI/CD, testing automation"
+  - id: research-analysis
+    name: "Research & Analysis"
+    description: "Web scraping, summarization, competitive intelligence"
+  - id: personal-productivity
+    name: "Personal Productivity"
+    description: "Email, calendar, task management automation"
+  - id: general
+    name: "General"
+    description: "Uncategorized or multi-purpose workflows"
+
+skill_levels:
+  - id: beginner
+    label: "Beginner"
+    emoji: "⭐"
+    description: "No coding required, uses visual/no-code tools"
+  - id: intermediate
+    label: "Intermediate"
+    emoji: "⭐⭐"
+    description: "Some API knowledge, basic scripting"
+  - id: advanced
+    label: "Advanced"
+    emoji: "⭐⭐⭐"
+    description: "Custom code, complex integrations, agent frameworks"

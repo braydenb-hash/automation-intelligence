@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  /* Background */
+  --color-midnight: #0C0C0C;
+
+  /* Text */
+  --color-cream: #E8E4DF;
+  --color-cream-dim: #A8A49F;
+
+  /* Accents */
+  --color-ember: #E8643A;
+  --color-flame: #D4542E;
+  --color-amber: #F0A030;
+  --color-copper: #C07840;
+  --color-rust: #A04020;
+
+  /* Surfaces */
+  --color-surface: #161412;
+  --color-surface-light: #1E1A16;
+  --color-border: #2A2520;
+
+  /* Fonts */
+  --font-serif: 'Cormorant', serif;
+  --font-sans: 'DM Sans', sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+/* Grain texture overlay */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-midnight);
+    color: var(--color-cream);
+  }
+
+  #root {
+    position: relative;
+    min-height: 100vh;
+  }
+
+  .grain::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    pointer-events: none;
+    opacity: 0.08;
+    filter: url(#grain);
+  }
+}

@@ -19,5 +19,9 @@ data/*.db-wal
 data/*.db-shm
 data/*.bak
 
+# Frontend
+node_modules/
+frontend/dist/
+
 # Environment
 .env

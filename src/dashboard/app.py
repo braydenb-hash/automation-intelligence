@@ -7,7 +7,7 @@ from pathlib import Path
 
 import markdown
 import yaml
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, send_from_directory
 
 from ..utils.config import (
     DATA_DIR, OUTPUT_DIR, WORKFLOWS_DIR, DISCOVERIES_DIR,
@@ -25,7 +25,14 @@ from ..utils.database import (
     get_tool_pairs, get_scan_history,
 )
 
-app = Flask(__name__, template_folder=str(PROJECT_ROOT / "src" / "dashboard" / "templates"))
+FRONTEND_DIST = PROJECT_ROOT / "frontend" / "dist"
+
+app = Flask(
+    __name__,
+    template_folder=str(PROJECT_ROOT / "src" / "dashboard" / "templates"),
+    static_folder=str(FRONTEND_DIST / "assets"),
+    static_url_path="/assets",
+)
 
 md = markdown.Markdown(extensions=["tables", "fenced_code"])
 
@@ -42,6 +49,21 @@ def _slugify(text):
 
 @app.route("/")
 def index():
+    if FRONTEND_DIST.exists():
+        return send_from_directory(str(FRONTEND_DIST), "index.html")
+    return render_template("index.html")
+
+
+@app.route("/<path:path>")
+def catch_all(path):
+    """Serve React app for client-side routes, static files from dist."""
+    if path.startswith("api/"):
+        return jsonify({"error": "not found"}), 404
+    file_path = FRONTEND_DIST / path
+    if file_path.exists() and file_path.is_file():
+        return send_from_directory(str(FRONTEND_DIST), path)
+    if FRONTEND_DIST.exists():
+        return send_from_directory(str(FRONTEND_DIST), "index.html")
     return render_template("index.html")
 
 

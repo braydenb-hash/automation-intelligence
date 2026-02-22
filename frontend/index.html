@@ -12,15 +12,6 @@
     />
   </head>
   <body>
-    <!-- SVG noise filter for grain texture -->
-    <svg style="position:absolute;width:0;height:0;overflow:hidden">
-      <defs>
-        <filter id="grain">
-          <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" stitchTiles="stitch" />
-          <feColorMatrix type="saturate" values="0" />
-        </filter>
-      </defs>
-    </svg>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -26,7 +26,10 @@
   --font-mono: 'IBM Plex Mono', monospace;
 }
 
-/* Grain texture overlay */
+@utility grain-filter {
+  filter: url(#grain);
+}
+
 @layer base {
   body {
     font-family: var(--font-sans);
@@ -37,15 +40,5 @@
   #root {
     position: relative;
     min-height: 100vh;
-  }
-
-  .grain::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 50;
-    pointer-events: none;
-    opacity: 0.08;
-    filter: url(#grain);
   }
 }
